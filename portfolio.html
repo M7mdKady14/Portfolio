@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mohammad Kady — .NET Developer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #09090f;
+        --surface: #111120;
+        --surface2: #181830;
+        --border: rgba(255, 255, 255, 0.07);
+        --accent: #5b6ef5;
+        --accent2: #a78bfa;
+        --accent-glow: rgba(91, 110, 245, 0.25);
+        --text: #e8e8f0;
+        --muted: #6b6b8a;
+        --white: #ffffff;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        overflow-x: hidden;
+      }
+
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.5;
+      }
+
+      /* ── GRID BACKGROUND ── */
+      .grid-bg {
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 0;
+        mask-image: radial-gradient(
+          ellipse 80% 60% at 50% 0%,
+          black 30%,
+          transparent 100%
+        );
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.1rem 3rem;
+        background: rgba(9, 9, 15, 0.7);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        z-index: 100;
+      }
+
+      .nav-logo {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: var(--white);
+        letter-spacing: -0.02em;
+      }
+
+      .nav-logo span {
+        color: var(--accent);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2.5rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 400;
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: var(--white);
+      }
+
+      /* ── SECTIONS ── */
+      section {
+        position: relative;
+        z-index: 1;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2.5rem;
+      }
+
+      /* ── HERO ── */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding-top: 80px;
+      }
+
+      .hero-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 2.5rem;
+        width: 100%;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: "DM Mono", monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        color: var(--accent);
+        border: 1px solid rgba(91, 110, 245, 0.3);
+        background: rgba(91, 110, 245, 0.08);
+        padding: 0.35rem 0.8rem;
+        border-radius: 100px;
+        margin-bottom: 2rem;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.2s forwards;
+      }
+
+      .hero-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--accent);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .hero h1 {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(2.4rem, 5vw, 4.8rem);
+        font-weight: 800;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+        color: var(--white);
+        opacity: 0;
+        animation: fadeUp 0.7s 0.35s forwards;
+      }
+
+      .hero h1 .line2 {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-sub {
+        margin-top: 1.8rem;
+        font-size: 1.15rem;
+        color: var(--muted);
+        max-width: 560px;
+        font-weight: 300;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.5s forwards;
+      }
+
+      .hero-sub strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2.8rem;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.65s forwards;
+      }
+
+      .btn-primary {
+        display: inline-block;
+        padding: 0.85rem 2rem;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 500;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        box-shadow: 0 0 30px rgba(91, 110, 245, 0.35);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 45px rgba(91, 110, 245, 0.55);
+      }
+
+      .btn-ghost {
+        display: inline-block;
+        padding: 0.85rem 2rem;
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-weight: 400;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        background: var(--accent-glow);
+      }
+
+      /* orb glow */
+      .hero-orb {
+        position: absolute;
+        top: 10%;
+        right: -5%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(
+          circle,
+          rgba(91, 110, 245, 0.15) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        border-radius: 50%;
+      }
+
+      .hero-stack {
+        margin-top: 4rem;
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        opacity: 0;
+        animation: fadeUp 0.7s 0.8s forwards;
+      }
+
+      .hero-stack-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .tech-tag {
+        font-family: "DM Mono", monospace;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      /* ── SECTION HEADER ── */
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.8rem;
+      }
+
+      .section-title {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        font-weight: 700;
+        color: var(--white);
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+
+      .section-title span {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* ── ABOUT ── */
+      #about {
+        padding: 7rem 0;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
+        align-items: center;
+        margin-top: 3rem;
+      }
+
+      .about-text p {
+        color: var(--muted);
+        margin-bottom: 1.2rem;
+        font-size: 1.05rem;
+        font-weight: 300;
+      }
+
+      .about-text p strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        padding: 1.8rem;
+        transition: background 0.2s;
+      }
+
+      .stat-card:hover {
+        background: var(--surface2);
+      }
+
+      .stat-num {
+        font-family: "Syne", sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--white);
+        line-height: 1;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-desc {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-top: 0.4rem;
+        font-weight: 300;
+      }
+
+      /* ── SKILLS ── */
+      #skills {
+        padding: 7rem 0;
+      }
+
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+
+      .skill-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.8rem;
+        transition:
+          border-color 0.25s,
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+
+      .skill-card:hover {
+        border-color: rgba(91, 110, 245, 0.4);
+        transform: translateY(-4px);
+        box-shadow:
+          0 20px 40px rgba(0, 0, 0, 0.4),
+          0 0 30px var(--accent-glow);
+      }
+
+      .skill-icon {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+      }
+
+      .skill-card h3 {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--white);
+        margin-bottom: 1rem;
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .stag {
+        font-family: "DM Mono", monospace;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+
+      /* ── PROJECTS ── */
+      #projects {
+        padding: 7rem 0;
+      }
+
+      .projects-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+
+      .project-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 0.25s,
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+
+      .project-card:hover {
+        border-color: rgba(91, 110, 245, 0.4);
+        transform: translateY(-4px);
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.5),
+          0 0 40px var(--accent-glow);
+      }
+
+      .project-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        opacity: 0;
+        transition: opacity 0.25s;
+      }
+
+      .project-card:hover::after {
+        opacity: 1;
+      }
+
+      .project-num {
+        font-family: "DM Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--accent);
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+      }
+
+      .project-card h3 {
+        font-family: "Syne", sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 0.8rem;
+      }
+
+      .project-card p {
+        font-size: 0.92rem;
+        color: var(--muted);
+        font-weight: 300;
+        margin-bottom: 1.5rem;
+        line-height: 1.65;
+      }
+
+      .project-features {
+        list-style: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .project-features li {
+        font-size: 0.87rem;
+        color: var(--muted);
+        padding: 0.3rem 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+      }
+
+      .project-features li::before {
+        content: "→";
+        color: var(--accent);
+        flex-shrink: 0;
+        margin-top: 0.05rem;
+      }
+
+      .project-tech {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .ptag {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        padding: 0.22rem 0.6rem;
+        border-radius: 5px;
+        background: rgba(91, 110, 245, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(91, 110, 245, 0.2);
+      }
+
+      /* ── SERVICES ── */
+      #services {
+        padding: 7rem 0;
+      }
+
+      .services-list {
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .service-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
+        padding: 2rem 2.5rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        transition: background 0.2s;
+        cursor: default;
+      }
+
+      .service-item:last-child {
+        border-bottom: none;
+      }
+      .service-item:hover {
+        background: var(--surface2);
+      }
+
+      .service-num {
+        font-family: "DM Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--accent);
+        letter-spacing: 0.1em;
+        flex-shrink: 0;
+        margin-top: 0.25rem;
+      }
+
+      .service-content h3 {
+        font-family: "Syne", sans-serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 0.4rem;
+      }
+
+      .service-content p {
+        font-size: 0.9rem;
+        color: var(--muted);
+        font-weight: 300;
+      }
+
+      /* ── CONTACT INFO STRIP ── */
+      .contact-info-strip {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+      }
+
+      .contact-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.55rem 1.1rem;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--text);
+        font-size: 0.88rem;
+        transition:
+          border-color 0.2s,
+          background 0.2s,
+          color 0.2s;
+      }
+
+      .contact-chip:hover {
+        border-color: var(--accent);
+        background: var(--accent-glow);
+        color: var(--white);
+      }
+
+      .contact-chip .chip-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+
+      .contact-chip .chip-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--muted);
+        display: block;
+        line-height: 1;
+        margin-bottom: 0.15rem;
+      }
+
+      .contact-chip .chip-value {
+        font-size: 0.85rem;
+        color: var(--text);
+        display: block;
+        line-height: 1;
+      }
+
+      .contact-chip:hover .chip-value {
+        color: var(--white);
+      }
+      .contact-chip:hover .chip-label {
+        color: var(--accent);
+      }
+
+      /* ── CONTACT BOX ── */
+      #contact {
+        padding: 7rem 0 6rem;
+      }
+
+      .contact-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 4rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .contact-box::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(91, 110, 245, 0.12) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .contact-box h2 {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 800;
+        color: var(--white);
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+        position: relative;
+      }
+
+      .contact-box p {
+        color: var(--muted);
+        font-size: 1.05rem;
+        font-weight: 300;
+        max-width: 480px;
+        margin: 0 auto 2.5rem;
+        position: relative;
+      }
+
+      .contact-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        position: relative;
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 2rem 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .footer-copy {
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+      }
+
+      .footer-made {
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .footer-made span {
+        color: var(--accent);
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s ease;
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ── SCROLLBAR ── */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--surface2);
+        border-radius: 3px;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 768px) {
+        nav {
+          padding: 1rem 1.5rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .container {
+          padding: 0 1.5rem;
+        }
+        .hero-inner {
+          padding: 0 1.5rem;
+        }
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+        .skills-grid {
+          grid-template-columns: 1fr;
+        }
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+        .contact-box {
+          padding: 2.5rem 1.5rem;
+        }
+        footer {
+          flex-direction: column;
+          gap: 0.5rem;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-bg"></div>
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">MK<span>.</span></div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-orb"></div>
+      <div class="hero-inner">
+        <div class="hero-badge">Available for freelance projects</div>
+        <h1>
+          Mohammad<br />
+          <span class="line2">Kady</span>
+        </h1>
+        <p class="hero-sub">
+          Mid-level <strong>.NET Developer</strong> crafting robust web
+          applications with <strong>ASP.NET Core</strong>, clean architecture,
+          and a sharp eye for detail. Based in Suez, Egypt.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn-primary">View My Work</a>
+          <a href="#contact" class="btn-ghost">Get In Touch</a>
+        </div>
+        <div class="hero-stack">
+          <span class="hero-stack-label">Stack</span>
+          <span class="tech-tag">C#</span>
+          <span class="tech-tag">ASP.NET Core</span>
+          <span class="tech-tag">Entity Framework</span>
+          <span class="tech-tag">SQL Server</span>
+          <span class="tech-tag">React</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="container">
+        <p class="section-label reveal">// about me</p>
+        <h2 class="section-title reveal">
+          The person <span>behind the code</span>
+        </h2>
+        <div class="about-grid">
+          <div class="about-text reveal">
+            <p>
+              I'm a software engineering student at
+              <strong>Suez University</strong>, specializing in web development
+              with the Microsoft .NET ecosystem. I lead the
+              <strong>ECPC competitive programming community</strong> at my
+              university — which means I think algorithmically and solve
+              problems with precision.
+            </p>
+            <p>
+              My experience spans the full backend stack: from
+              <strong>clean architecture and N-tier patterns</strong> to
+              database design, authentication systems, and REST APIs. I also
+              work in embedded systems, giving me a rare low-level perspective
+              that makes my software solutions more thoughtful.
+            </p>
+            <p>
+              I care deeply about
+              <strong>code quality, clear communication,</strong> and delivering
+              on time — every time.
+            </p>
+          </div>
+          <div class="stat-grid reveal">
+            <div class="stat-card">
+              <div class="stat-num">2+</div>
+              <div class="stat-desc">Years in .NET development</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">C#</div>
+              <div class="stat-desc">Primary language</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">Mid</div>
+              <div class="stat-desc">Level & growing fast</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-num">EG</div>
+              <div class="stat-desc">Suez, Egypt — remote-ready</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="container">
+        <p class="section-label reveal">// skills</p>
+        <h2 class="section-title reveal">My <span>technical toolkit</span></h2>
+        <div class="skills-grid">
+          <div class="skill-card reveal">
+            <div class="skill-icon">⚙️</div>
+            <h3>Backend Development</h3>
+            <div class="skill-tags">
+              <span class="stag">ASP.NET Core MVC</span>
+              <span class="stag">Web API</span>
+              <span class="stag">C#</span>
+              <span class="stag">LINQ</span>
+              <span class="stag">Entity Framework Core</span>
+              <span class="stag">ASP.NET Identity</span>
+            </div>
+          </div>
+          <div class="skill-card reveal">
+            <div class="skill-icon">🏗️</div>
+            <h3>Architecture & Patterns</h3>
+            <div class="skill-tags">
+              <span class="stag">N-Tier Architecture</span>
+              <span class="stag">Repository Pattern</span>
+              <span class="stag">Service Layer</span>
+              <span class="stag">MVC</span>
+              <span class="stag">RESTful API Design</span>
+            </div>
+          </div>
+          <div class="skill-card reveal">
+            <div class="skill-icon">🗄️</div>
+            <h3>Databases</h3>
+            <div class="skill-tags">
+              <span class="stag">SQL Server</span>
+              <span class="stag">ERD Design</span>
+              <span class="stag">Advanced Queries</span>
+              <span class="stag">Migrations</span>
+            </div>
+          </div>
+          <div class="skill-card reveal">
+            <div class="skill-icon">🎨</div>
+            <h3>Frontend</h3>
+            <div class="skill-tags">
+              <span class="stag">React</span>
+              <span class="stag">TypeScript</span>
+              <span class="stag">Bootstrap</span>
+              <span class="stag">HTML5</span>
+              <span class="stag">CSS3</span>
+            </div>
+          </div>
+          <div class="skill-card reveal">
+            <div class="skill-icon">🔒</div>
+            <h3>Auth & Security</h3>
+            <div class="skill-tags">
+              <span class="stag">ASP.NET Identity</span>
+              <span class="stag">Role-Based Access</span>
+              <span class="stag">JWT</span>
+              <span class="stag">Authentication Flows</span>
+            </div>
+          </div>
+          <div class="skill-card reveal">
+            <div class="skill-icon">🛠️</div>
+            <h3>Tools & Workflow</h3>
+            <div class="skill-tags">
+              <span class="stag">Git</span>
+              <span class="stag">Visual Studio</span>
+              <span class="stag">VS Code</span>
+              <span class="stag">dotnet CLI</span>
+              <span class="stag">Postman</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="container">
+        <p class="section-label reveal">// projects</p>
+        <h2 class="section-title reveal">Things I've <span>built</span></h2>
+        <div class="projects-grid">
+          <div class="project-card reveal">
+            <div class="project-num">01 — E-Commerce</div>
+            <h3>ShopNest</h3>
+            <p>
+              A full-featured e-commerce platform built from the ground up with
+              ASP.NET Core MVC, focusing on clean layered architecture and
+              real-world functionality.
+            </p>
+            <ul class="project-features">
+              <li>
+                Layered architecture: Models, ViewModels, Repositories,
+                Services, Controllers
+              </li>
+              <li>Product & category management with full CRUD operations</li>
+              <li>Responsive UI with Bootstrap</li>
+              <li>
+                Live development with
+                <code
+                  style="
+                    font-family: &quot;DM Mono&quot;, monospace;
+                    font-size: 0.8em;
+                    color: var(--accent);
+                  "
+                  >dotnet watch</code
+                >
+              </li>
+            </ul>
+            <div class="project-tech">
+              <span class="ptag">ASP.NET Core MVC</span>
+              <span class="ptag">C#</span>
+              <span class="ptag">EF Core</span>
+              <span class="ptag">SQL Server</span>
+              <span class="ptag">Bootstrap</span>
+            </div>
+          </div>
+
+          <div class="project-card reveal">
+            <div class="project-num">02 — Healthcare</div>
+            <h3>Medicare</h3>
+            <p>
+              A hospital management web application with a robust role-based
+              identity system distinguishing doctors from patients, each with
+              their own profile logic.
+            </p>
+            <ul class="project-features">
+              <li>
+                Separate Doctor / Patient roles with independent profile tables
+              </li>
+              <li>
+                Extended
+                <code
+                  style="
+                    font-family: &quot;DM Mono&quot;, monospace;
+                    font-size: 0.8em;
+                    color: var(--accent);
+                  "
+                  >IdentityUser</code
+                >
+                with domain-specific data
+              </li>
+              <li>ERD-driven database design for integrity</li>
+              <li>Secure login and access control per role</li>
+            </ul>
+            <div class="project-tech">
+              <span class="ptag">ASP.NET Core</span>
+              <span class="ptag">ASP.NET Identity</span>
+              <span class="ptag">C#</span>
+              <span class="ptag">SQL Server</span>
+              <span class="ptag">ERD Design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="container">
+        <p class="section-label reveal">// services</p>
+        <h2 class="section-title reveal">What I can <span>do for you</span></h2>
+        <div class="services-list reveal">
+          <div class="service-item">
+            <span class="service-num">01</span>
+            <div class="service-content">
+              <h3>Full-Stack Web Applications</h3>
+              <p>
+                End-to-end development of web apps using ASP.NET Core MVC — from
+                database design to a responsive frontend, ready to deploy.
+              </p>
+            </div>
+          </div>
+          <div class="service-item">
+            <span class="service-num">02</span>
+            <div class="service-content">
+              <h3>REST API Development</h3>
+              <p>
+                Clean, well-documented REST APIs built with ASP.NET Core Web
+                API, structured for easy integration with any frontend or mobile
+                client.
+              </p>
+            </div>
+          </div>
+          <div class="service-item">
+            <span class="service-num">03</span>
+            <div class="service-content">
+              <h3>Authentication & Authorization Systems</h3>
+              <p>
+                Implementing login, registration, roles, and permissions using
+                ASP.NET Identity — secure and fully customizable per your
+                business logic.
+              </p>
+            </div>
+          </div>
+          <div class="service-item">
+            <span class="service-num">04</span>
+            <div class="service-content">
+              <h3>Database Design & Optimization</h3>
+              <p>
+                Designing relational schemas from ERDs, writing efficient SQL
+                queries, and setting up Entity Framework Core migrations for SQL
+                Server.
+              </p>
+            </div>
+          </div>
+          <div class="service-item">
+            <span class="service-num">05</span>
+            <div class="service-content">
+              <h3>Existing Project Fixes & Upgrades</h3>
+              <p>
+                Debugging, refactoring, or migrating existing .NET projects to
+                modern versions with improved architecture and performance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <div class="contact-box reveal">
+          <h2>Let's build something together</h2>
+          <p>
+            Have a project in mind? I'm open to freelance work and would love to
+            hear about what you're building.
+          </p>
+
+          <div class="contact-info-strip">
+            <a href="mailto:mohammadahmadkady@gmail.com" class="contact-chip">
+              <span class="chip-icon">✉️</span>
+              <span>
+                <span class="chip-label">Email</span>
+                <span class="chip-value">mohammadahmadkady@gmail.com</span>
+              </span>
+            </a>
+            <a href="tel:+201099740873" class="contact-chip">
+              <span class="chip-icon">📞</span>
+              <span>
+                <span class="chip-label">Phone</span>
+                <span class="chip-value">+20 1099740873</span>
+              </span>
+            </a>
+            <a
+              href="https://github.com/M7mdKady14"
+              class="contact-chip"
+              target="_blank"
+            >
+              <span class="chip-icon">🐙</span>
+              <span>
+                <span class="chip-label">GitHub</span>
+                <span class="chip-value">github.com/M7mdKady14</span>
+              </span>
+            </a>
+            <a
+              href="https://www.linkedin.com/in/mohammad-kady/"
+              class="contact-chip"
+              target="_blank"
+            >
+              <span class="chip-icon">💼</span>
+              <span>
+                <span class="chip-label">LinkedIn</span>
+                <span class="chip-value">linkedin.com/in/mohammad-kady</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="contact-links">
+            <a href="mailto:mohammadahmadkady@gmail.com" class="btn-primary"
+              >📨 Send me an email</a
+            >
+            <a
+              href="https://github.com/M7mdKady14"
+              class="btn-ghost"
+              target="_blank"
+              >GitHub →</a
+            >
+            <a
+              href="https://www.linkedin.com/in/mohammad-kady/"
+              class="btn-ghost"
+              target="_blank"
+              >LinkedIn →</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span class="footer-copy"
+        >© 2026 Mohammad Kady. All rights reserved.</span
+      >
+      <span class="footer-made">Built with <span>♥</span> and C#</span>
+    </footer>
+
+    <script>
+      // Scroll reveal
+      const reveals = document.querySelectorAll(".reveal");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add("visible"), i * 80);
+              observer.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+      );
+
+      reveals.forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>
